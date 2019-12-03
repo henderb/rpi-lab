@@ -1,4 +1,4 @@
 node /server\./ {
-    include 'apt-cache-ng::client'
+    include 'apt_cache_ng::client'
     include 'ldap::client'
 }
