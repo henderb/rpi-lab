@@ -8,5 +8,6 @@ class ldap::client {
         mode    => '0644',
         owner   => 'root',
         group   => 'root',
+        require => Package['libpam-ldapd'],
     }
 }
