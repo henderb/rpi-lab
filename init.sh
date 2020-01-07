@@ -1,12 +1,14 @@
 #!/bin/bash
 
-sudo hostname rpi-desktop00.henderb.net
+hostname rpi-desktop00.henderb.net
 
-sudo apt install -y squid-deb-proxy-client
+apt install -y squid-deb-proxy-client
 
-SERVER_IP=$(avahi-resolve -4 rpi-server.local | cut -f2)
+SERVER_IP=$(avahi-resolve-host-name -4 rpi-server.local | cut -f2)
 echo "${SERVER_IP}   rpi-server.henderb.net" >> /etc/hosts
 
-sudo apt update
-sudo apt install -y puppet
-sudo puppet apply --modulepath=modules/ .
+apt update
+apt install -y puppet
+puppet apply --modulepath=modules/ .
+
+#reboot
