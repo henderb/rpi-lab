@@ -1,3 +1,3 @@
 #!/bin/bash
 
-puppet apply --modulepath=modules/ .
+sudo puppet apply --modulepath=modules/ .
