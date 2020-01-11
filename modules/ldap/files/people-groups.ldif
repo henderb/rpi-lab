@@ -1,0 +1,7 @@
+dn: ou=People,dc=ctmug,dc=net
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=ctmug,dc=net
+objectClass: organizationalUnit
+ou: Groups

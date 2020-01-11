@@ -1,6 +1,6 @@
 class ldap::client(
-        String $ldap_base  = 'dc=henderb,dc=net',
-        String $ldap_uri   = 'ldap://rpi-server.henderb.net',
+        String $ldap_base  = 'dc=ctmug,dc=net',
+        String $ldap_uri   = 'ldap://rpi-server.ctmug.net',
     ){
     
     package { 'libpam-ldapd':   ensure => 'installed' }
