@@ -41,4 +41,12 @@ class ldap::client(
         owner   => 'root',
         group   => 'root',
     }
+
+    file { '/usr/share/rpd-wallpaper/ctm_desktop.png':
+        ensure  => 'present',
+        source  => 'puppet:///modules/ldap/ctm_desktop.png',
+        mode    => '0644',
+        owner   => 'root',
+        group   => 'root',
+    }
 }
