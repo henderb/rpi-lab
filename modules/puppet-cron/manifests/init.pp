@@ -14,7 +14,7 @@ class puppet-cron {
     }
 
     exec { 'puppet-apply':
-	command     => '/usr/bin/puppet apply /etc/puppet/code --logdest syslog'
+	command     => '/usr/bin/puppet apply /etc/puppet/code --logdest syslog',
         refreshonly => true,
         user        => 'root',
         subscribe   => Vcsrepo['/etc/puppet/code'],
