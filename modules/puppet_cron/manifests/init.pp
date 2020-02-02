@@ -1,4 +1,4 @@
-class puppet-cron {
+class puppet_cron {
     cron { 'puppet-apply':
         ensure  => 'present',
         user    => 'root',
