@@ -1,4 +1,6 @@
 class puppet_cron {
+    include '::network'
+
     cron { 'puppet-apply':
         ensure  => 'present',
         user    => 'root',
