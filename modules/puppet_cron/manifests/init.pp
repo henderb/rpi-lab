@@ -9,7 +9,7 @@ class puppet_cron {
     }
 
     vcsrepo { '/etc/puppet/code':
-        ensure   => 'present',
+        ensure   => 'latest',
         provider => 'git',
         source   => 'https://github.com/henderb/rpi-lab.git',
         revision => 'master',
