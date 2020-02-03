@@ -5,20 +5,14 @@ class puppet_cron {
         ensure  => 'present',
         user    => 'root',
         minute  => 0,
-        command => '/usr/bin/puppet apply /etc/puppet/code --logdest syslog',
+        command => 'cd /etc/puppet/code; git pull; /usr/bin/puppet apply /etc/puppet/code --logdest syslog',
+	require => Vcsrepo['/etc/puppet/code'],
     }
 
     vcsrepo { '/etc/puppet/code':
-        ensure   => 'latest',
+        ensure   => 'present',
         provider => 'git',
         source   => 'https://github.com/henderb/rpi-lab.git',
         revision => 'master',
-    }
-
-    exec { 'puppet-apply':
-	command     => '/usr/bin/puppet apply /etc/puppet/code --logdest syslog',
-        refreshonly => true,
-        user        => 'root',
-        subscribe   => Vcsrepo['/etc/puppet/code'],
     }
 }
