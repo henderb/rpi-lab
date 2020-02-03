@@ -1,19 +1,19 @@
 require 'spec_helper_acceptance'
 
-tmpdir = '/tmp/vcsrepo'
+tmpdir = default.tmpdir('vcsrepo')
 
 describe 'subversion :includes tests on SVN version >= 1.7', unless: ( # rubocop:disable RSpec/MultipleDescribes : The
     # test's on this page must be kept seperate as they are for different operating systems.
-    (os[:family] == 'redhat' && os[:release].start_with?('5', '6')) ||
-    (os[:family] == 'sles')
+    (fact('osfamily') == 'RedHat' && fact('operatingsystemmajrelease') =~ %r{^(5|6)$}) ||
+    (fact('osfamily') == 'SLES')
 ) do
 
   before(:all) do
-    run_shell("mkdir -p #{tmpdir}") # win test
+    shell("mkdir -p #{tmpdir}") # win test
   end
 
   after(:all) do
-    run_shell("rm -rf #{tmpdir}/svnrepo")
+    shell("rm -rf #{tmpdir}/svnrepo")
   end
 
   context 'with include paths' do
@@ -28,7 +28,8 @@ describe 'subversion :includes tests on SVN version >= 1.7', unless: ( # rubocop
     MANIFEST
     it 'can checkout specific paths from svn' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/difftools") do
@@ -66,7 +67,8 @@ describe 'subversion :includes tests on SVN version >= 1.7', unless: ( # rubocop
     MANIFEST
     it 'can add paths to includes' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/guis/pics/README") do
@@ -89,7 +91,8 @@ describe 'subversion :includes tests on SVN version >= 1.7', unless: ( # rubocop
     MANIFEST
     it 'can remove paths (and empty parent directories) from includes' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/guis/pics/README") do
@@ -121,29 +124,25 @@ describe 'subversion :includes tests on SVN version >= 1.7', unless: ( # rubocop
     MANIFEST
     it 'can change revisions' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
-    it 'svn info svnrepo' do
-      run_shell("svn info #{tmpdir}/svnrepo") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1700000.*})
-      end
+    describe command("svn info #{tmpdir}/svnrepo") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1700000.*}) }
     end
-
-    it 'svn info svnrepo/difftools/README' do
-      run_shell("svn info #{tmpdir}/svnrepo/difftools/README") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1700000.*})
-      end
+    describe command("svn info #{tmpdir}/svnrepo/difftools/README") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1700000.*}) }
     end
   end
 end
 
 describe 'subversion :includes tests on SVN version == 1.6', if: (
-    (os[:family] == 'redhat' && os[:release].start_with?('5', '6'))
+    (fact('osfamily') == 'RedHat' && fact('operatingsystemmajrelease') =~ %r{^(5|6)$})
 ) do
 
   after(:all) do
-    run_shell("rm -rf #{tmpdir}/svnrepo")
+    shell("rm -rf #{tmpdir}/svnrepo")
   end
 
   context 'with include paths' do
@@ -158,7 +157,8 @@ describe 'subversion :includes tests on SVN version == 1.6', if: (
     MANIFEST
     it 'can checkout specific paths from svn' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/difftools") do
@@ -196,7 +196,8 @@ describe 'subversion :includes tests on SVN version == 1.6', if: (
     MANIFEST
     it 'can add paths to includes' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/guis/pics/README") do
@@ -218,6 +219,7 @@ describe 'subversion :includes tests on SVN version == 1.6', if: (
         }
     MANIFEST
     it 'can remove directory paths (and empty parent directories) from includes, but not files with siblings' do
+      # Run it twice and test for idempotency
       apply_manifest(pp, catch_failures: true)
     end
 
@@ -250,18 +252,34 @@ describe 'subversion :includes tests on SVN version == 1.6', if: (
     MANIFEST
     it 'can change revisions' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
-    it 'svn info of svnrepo' do
-      run_shell("svn info #{tmpdir}/svnrepo") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1700000.*})
-      end
+    describe command("svn info #{tmpdir}/svnrepo") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1700000.*}) }
     end
+    describe command("svn info #{tmpdir}/svnrepo/difftools/README") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1700000.*}) }
+    end
+  end
+end
 
-    it 'svn info of svnrepo/difftools/README' do
-      run_shell("svn info #{tmpdir}/svnrepo/difftools/README") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1700000.*})
+describe 'subversion :includes tests on SVN version < 1.6', if: (fact('osfamily') == 'SLES') do
+  context 'with include paths' do
+    pp = <<-MANIFEST
+        vcsrepo { "#{tmpdir}/svnrepo":
+          ensure   => present,
+          provider => svn,
+          includes => ['difftools/README', 'obsolete-notes',],
+          source   => "http://svn.apache.org/repos/asf/subversion/developer-resources",
+          revision => 1000000,
+        }
+    MANIFEST
+    it 'fails when SVN version < 1.6' do
+      # Expect error when svn < 1.6 and includes is used
+      apply_manifest(pp, expect_failures: true) do |r|
+        expect(r.stderr).to match(%r{Includes option is not available for SVN versions < 1.6. Version installed:})
       end
     end
   end

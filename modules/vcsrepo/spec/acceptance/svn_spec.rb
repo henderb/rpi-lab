@@ -1,10 +1,10 @@
 require 'spec_helper_acceptance'
 
-tmpdir = '/tmp/vcsrepo'
+tmpdir = default.tmpdir('vcsrepo')
 
 describe 'subversion tests' do
   before(:each) do
-    run_shell("mkdir -p #{tmpdir}") # win test
+    shell("mkdir -p #{tmpdir}") # win test
   end
 
   context 'with plain checkout' do
@@ -17,7 +17,8 @@ describe 'subversion tests' do
     MANIFEST
     it 'can checkout svn' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/.svn") do
@@ -28,7 +29,7 @@ describe 'subversion tests' do
     end
 
     after(:all) do
-      run_shell("rm -rf #{tmpdir}/svnrepo")
+      shell("rm -rf #{tmpdir}/svnrepo")
     end
   end
 
@@ -43,19 +44,16 @@ describe 'subversion tests' do
     MANIFEST
     it 'can checkout a specific revision of svn' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/.svn") do
       it { is_expected.to be_directory }
     end
-
-    it 'svn info svnrepo' do
-      run_shell("svn info #{tmpdir}/svnrepo") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1000000.*})
-      end
+    describe command("svn info #{tmpdir}/svnrepo") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1000000.*}) }
     end
-
     describe file("#{tmpdir}/svnrepo/difftools/README") do
       its(:md5sum) { is_expected.to eq '540241e9d5d4740d0ef3d27c3074cf93' }
     end
@@ -72,20 +70,19 @@ describe 'subversion tests' do
     MANIFEST
     it 'can switch revisions' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/.svn") do
       it { is_expected.to be_directory }
     end
-    it 'svn info svnrepo' do
-      run_shell("svn info #{tmpdir}/svnrepo") do |r|
-        expect(r.stdout).to match(%r{.*Revision: 1700000.*})
-      end
+    describe command("svn info #{tmpdir}/svnrepo") do
+      its(:stdout) { is_expected.to match(%r{.*Revision: 1700000.*}) }
     end
 
     after(:all) do
-      run_shell("rm -rf #{tmpdir}/svnrepo")
+      shell("rm -rf #{tmpdir}/svnrepo")
     end
   end
 
@@ -99,7 +96,8 @@ describe 'subversion tests' do
     MANIFEST
     it 'can checkout tag=1.9.0' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
     describe file("#{tmpdir}/svnrepo/.svn") do
       it { is_expected.to be_directory }
@@ -119,7 +117,8 @@ describe 'subversion tests' do
     MANIFEST
     it 'can switch to tag=1.9.4' do
       # Run it twice and test for idempotency
-      idempotent_apply(pp)
+      apply_manifest(pp, catch_failures: true)
+      apply_manifest(pp, catch_changes: true)
     end
 
     describe file("#{tmpdir}/svnrepo/.svn") do

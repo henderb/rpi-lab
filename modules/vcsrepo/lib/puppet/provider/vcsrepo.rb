@@ -16,18 +16,7 @@ class Puppet::Provider::Vcsrepo < Puppet::Provider
   def set_ownership
     owner = @resource.value(:owner) || nil
     group = @resource.value(:group) || nil
-    excludes = @resource.value(:excludes) || nil
-    if excludes.nil? || excludes.empty?
-      FileUtils.chown_R(owner, group, @resource.value(:path))
-    else
-      FileUtils.chown(owner, group, files)
-    end
-  end
-
-  def files
-    excludes = @resource.value(:excludes)
-    path = @resource.value(:path)
-    Dir["#{path}/**/*"].reject { |f| excludes.any? { |p| f.start_with?("#{path}/#{p}") } }
+    FileUtils.chown_R(owner, group, @resource.value(:path))
   end
 
   def path_exists?
