@@ -5,7 +5,7 @@ class puppet_cron {
         ensure  => 'present',
         user    => 'root',
         minute  => 0,
-        command => 'cd /etc/puppet/code; git pull; /usr/bin/puppet apply /etc/puppet/code --logdest syslog',
+        command => 'sleep ${RANDOM:0:10}m; cd /etc/puppet/code; git pull; /usr/bin/puppet apply /etc/puppet/code --logdest syslog',
 	require => Vcsrepo['/etc/puppet/code'],
     }
 
