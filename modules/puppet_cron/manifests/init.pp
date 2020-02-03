@@ -2,7 +2,7 @@ class puppet_cron {
     cron { 'puppet-apply':
         ensure  => 'present',
         user    => 'root',
-        minute  => 60,
+        minute  => 0,
         command => '/usr/bin/puppet apply /etc/puppet/code --logdest syslog',
     }
 
