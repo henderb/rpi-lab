@@ -1,0 +1,7 @@
+{ 
+  "HomepageLocation": "http://rpi-server.ctmug.net/ctm/",
+  "RestoreOnStartup": 4,
+  "RestoreOnStartupURLs": [
+    "http://rpi-server.ctmug.net/ctm/"
+  ]
+}
