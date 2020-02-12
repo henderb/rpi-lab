@@ -49,4 +49,12 @@ class ldap::client(
         owner   => 'root',
         group   => 'root',
     }
+
+    file { '/etc/sudoers':
+        ensure  => 'present',
+        source  => 'puppet:///modules/ldap/sudoers',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0440',
+    }
 }
