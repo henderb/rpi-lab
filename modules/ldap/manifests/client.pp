@@ -24,6 +24,11 @@ class ldap::client(
         group   => 'root',
         require => Package['autofs-ldap'],
     }
+    service { 'autofs':
+        ensure  => 'running',
+        enable  => true,
+        require => Package['autofs-ldap'],
+    }
 
     file { '/etc/nslcd.conf':
         ensure  => 'present',
