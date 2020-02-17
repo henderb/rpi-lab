@@ -14,4 +14,13 @@ class desktop {
         group  => 'root',
         mode   => '0644',
     }
+
+    cron { 'autofs-bandaid':
+        ensure  => 'present',
+        user    => 'root',
+        special => 'reboot',
+        command => '/bin/bash -c \'/bin/sleep 2m; /bin/systemctl restart autofs\'',
+	require => Vcsrepo['/etc/puppet/code'],
+    }
+
 }
